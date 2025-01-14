@@ -9,10 +9,13 @@ This is a simple tool that can be used to convert UFC Undisputed 3 character mod
 - **Wand** == 0.6.13 (used for resizing *.dds textures)
 
 ## Usage
-1. Clone this repository:
-```bash
-git clone https://github.com/Natan822/ufc-u3-model-converter.git
-``` 
+> Note: Make sure you already have the requirements installed before following these steps.
+1. Either:
+   - Clone this repository:
+    ```bash
+    git clone https://github.com/Natan822/ufc-u3-model-converter.git
+    ``` 
+   - Or download the latest release's source-code under the [Releases page](https://github.com/Natan822/ufc-u3-model-converter/releases).
 2. Navigate to the project's directory where 'main.py' is located.
 3. Install dependencies:
 ```bash
