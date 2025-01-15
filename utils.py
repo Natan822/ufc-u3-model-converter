@@ -110,11 +110,3 @@ def compress_yzli(data: bytes, name: str) -> bytes:
     header = b"YZLI" + data_size.to_bytes(4, byteorder="little") + (0).to_bytes(8, "little")
     compressed_data = zlib.compress(data, level=9)
     return header + compressed_data
-
-# def decompress_yzli(input_path: str, output_path: str):
-#     with open(input_path, "rb") as file:
-#         buffer = file.read()
-#
-#     decompressed_data = zlib.decompress(buffer)
-#     with open(output_path, "wb") as file:
-#         file.write(decompressed_data)
