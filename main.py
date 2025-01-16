@@ -35,7 +35,7 @@ def main():
             return
 
     if mpc_input != "":
-        backup_file(mpc_input)
+        utils.backup_file(mpc_input)
         hkx_mpc_files = list[HkxFile](utils.extract_mpc(mpc_input, "hkx"))
 
     all_files = list[PatchableFile](hkx_pac_files + hkx_mpc_files + dds_files)
