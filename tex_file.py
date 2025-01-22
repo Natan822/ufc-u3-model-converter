@@ -1,6 +1,4 @@
-from dds_file import DdsFile
 from file import File
-import utils
 import logging
 
 logger = logging.getLogger(__name__)

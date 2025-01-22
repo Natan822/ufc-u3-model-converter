@@ -1,5 +1,5 @@
 import io
-import utils
+import extraction_utils
 import logging
 
 logger = logging.getLogger(__name__)
@@ -24,7 +24,7 @@ class File:
     def decompress(self):
         logger.info(f"Decompressing {self.get_name_with_extension()} ...")
         if self.isCompressed:
-            self.data = utils.decompress_yzli(self.data)
+            self.data = extraction_utils.decompress_yzli(self.data)
             self.isCompressed = False
             self.size = len(self.data)
 
@@ -35,7 +35,7 @@ class File:
     def compress(self):
         logger.info(f"Compressing {self.get_name_with_extension()} ...")
         if not self.isCompressed:
-            self.data = utils.compress_yzli(self.data, self.name)
+            self.data = extraction_utils.compress_yzli(self.data, self.name)
             self.isCompressed = True
             self.size = len(self.data)
 
@@ -97,7 +97,7 @@ class File:
             if _name == self.name and _extension == self.extension:
                 file.seek(_offset)
                 header = file.read(4)
-                if header.decode() == "YZLI" and not self.isCompressed:
+                if header.decode(errors="ignore") == "YZLI" and not self.isCompressed:
                     self.compress()
 
                 file.seek(_offset)
