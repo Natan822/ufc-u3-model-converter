@@ -7,13 +7,17 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-def backup_file(input_path: str):
+def backup_file(input_path: str, output_path: str):
     logger.info(f"Creating copy of {input_path} ...")
+
+    if (input_path == output_path):
+        output_path += ".bak"
+
     with open(input_path, "rb") as fr:
         buffer = fr.read()
-        with open(input_path + ".bak", "wb") as fw:
+        with open(output_path, "wb") as fw:
             fw.write(buffer)
-            logger.info(f"    - Copy created at {input_path}.bak.")
+            logger.info(f"    - Copy created at {output_path}.")
 
 def decompress_yzli(data: bytes) -> bytes:
     return zlib.decompress(data[16:])
@@ -37,15 +41,15 @@ def extract_pac_buffer(buffer: bytes, extension: str) -> list[File]:
         if buffer[row_index:row_index + 3] == extension.encode():
             file_name = buffer[row_index - 16: row_index].decode("utf-8", errors="ignore").replace("\x00", "")
             file_offset = int.from_bytes(buffer[row_index + 8: row_index + 12], byteorder="big")
-            #file_size = int.from_bytes(buffer[row_index + 4: row_index + 8], byteorder="big")
+            file_size = int.from_bytes(buffer[row_index + 4: row_index + 8], byteorder="big")
             # Size is calculated this way: (next_file.offset - current_file.offset)
             # However, if this is the last file, then: (pac_file.size - current_file.offset)
-            file_size = 0
-            if i == (files_count * 2): # Last file
-                file_size = len(buffer) - file_offset
-            else:
-                next_file_offset = int.from_bytes(buffer[row_index + 0x20 +  8: row_index + 0x20 + 12], byteorder="big")
-                file_size = next_file_offset - file_offset
+            # file_size = 0
+            # if i == (files_count * 2): # Last file
+            #     file_size = len(buffer) - file_offset
+            # else:
+            #     next_file_offset = int.from_bytes(buffer[row_index + 0x20 +  8: row_index + 0x20 + 12], byteorder="big")
+            #     file_size = next_file_offset - file_offset
 
             data = buffer[file_offset: file_offset + file_size]
 
