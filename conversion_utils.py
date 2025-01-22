@@ -1,7 +1,5 @@
-from dds_file import DdsFile
-from hkx_file import HkxFile
 from patchable_file import PatchableFile
-from tex_file import TexFile
+from file import File
 import extraction_utils
 import os
 import zlib
@@ -53,17 +51,17 @@ def convert_files(pac_filepath: str, mpc_filepath: str):
     hkx_mpc_files = []
     if pac_input != "":
         extraction_utils.backup_file(pac_input, pac_input)
-        hkx_pac_files = list[HkxFile](extraction_utils.extract_pac_path(pac_input, "hkx"))
-        tex_files = list[TexFile](extraction_utils.extract_pac_path(pac_input, "tex"))
+        hkx_pac_files = list[File](extraction_utils.extract_pac_path(pac_input, "hkx"))
+        tex_files = list[File](extraction_utils.extract_pac_path(pac_input, "tex"))
         if len(tex_files) == 1:
-            dds_files = list[DdsFile](extraction_utils.extract_pac_buffer(tex_files[0].data, "dds"))
+            dds_files = list[File](extraction_utils.extract_pac_buffer(tex_files[0].data, "dds"))
         else:
             logger.critical("More than one or no .tex files found.")
             return
 
     if mpc_input != "":
         extraction_utils.backup_file(mpc_input, mpc_input)
-        hkx_mpc_files = list[HkxFile](extraction_utils.extract_mpc(mpc_input, "hkx"))
+        hkx_mpc_files = list[File](extraction_utils.extract_mpc(mpc_input, "hkx"))
 
     all_files = list[PatchableFile](hkx_pac_files + hkx_mpc_files + dds_files)
     # Decompress and patch files
