@@ -1,10 +1,11 @@
-from patchable_file import PatchableFile
+from file import File
 from wand.image import Image as WandImage
 import logging
 
+
 logger = logging.getLogger(__name__)
 
-class DdsFile(PatchableFile):
+class DdsFile(File):
 
     def __init__(self, name: str, size: int, data: bytes, isCompressed: bool):
         super().__init__(name, size, data, isCompressed, "dds")

@@ -1,9 +1,10 @@
-from patchable_file import PatchableFile
+from file import File
 import logging
+
 
 logger = logging.getLogger(__name__)
 
-class HkxFile(PatchableFile):
+class HkxFile(File):
 
     def __init__(self, name: str, size: int, data: bytes, isCompressed: bool):
         super().__init__(name, size, data, isCompressed, "hkx")

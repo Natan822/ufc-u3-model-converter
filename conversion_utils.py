@@ -1,4 +1,3 @@
-from patchable_file import PatchableFile
 from file import File
 import extraction_utils
 import os
@@ -63,7 +62,7 @@ def convert_files(pac_filepath: str, mpc_filepath: str):
         extraction_utils.backup_file(mpc_input, mpc_input)
         hkx_mpc_files = list[File](extraction_utils.extract_mpc(mpc_input, "hkx"))
 
-    all_files = list[PatchableFile](hkx_pac_files + hkx_mpc_files + dds_files)
+    all_files = list[File](hkx_pac_files + hkx_mpc_files + dds_files)
     # Decompress and patch files
     for file in all_files:
         file.decompress()

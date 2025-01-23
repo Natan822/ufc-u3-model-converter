@@ -1,5 +1,4 @@
 import io
-import extraction_utils
 import logging
 
 logger = logging.getLogger(__name__)
@@ -22,6 +21,8 @@ class File:
 
 
     def decompress(self):
+        import extraction_utils
+
         logger.info(f"Decompressing {self.get_name_with_extension()} ...")
         if self.isCompressed:
             self.data = extraction_utils.decompress_yzli(self.data)
@@ -33,6 +34,8 @@ class File:
             logger.info(f"{self.get_name_with_extension()} is already decompressed.")
 
     def compress(self):
+        import extraction_utils
+
         logger.info(f"Compressing {self.get_name_with_extension()} ...")
         if not self.isCompressed:
             self.data = extraction_utils.compress_yzli(self.data, self.name)
@@ -158,4 +161,6 @@ class File:
                 byte_index += 4
             logger.warning(f"Failed to write {self.get_name_with_extension()} into {mpc_path}: File not found within {mpc_path}.")
 
-
+    def patch(self):
+        logger.warning(f"{self.get_name_with_extension()} is not a patchable file or its patch hasn't been implemented.")
+        return
