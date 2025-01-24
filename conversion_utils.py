@@ -81,9 +81,9 @@ def convert_files(pac_filepath: str, mpc_filepath: str):
         file.write_pac_path(output_pac)
 
     if pac_input != "":
-        logger.info(f"Successfully converted {pac_input}.")
+        print(f"Successfully converted {pac_input}.")
     if mpc_input != "":
-        logger.info(f"Successfully converted {mpc_input}.")
+        print(f"Successfully converted {mpc_input}.")
 
 def display_results():
     global failed_files, converted_files
