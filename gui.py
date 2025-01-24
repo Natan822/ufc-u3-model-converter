@@ -10,28 +10,31 @@ def select_pac():
     tk.Tk().withdraw()
     pac_filename = tk.filedialog.askopenfilename(title="Select a .pac file",
                                                  filetypes=[("Pac files", "*.pac"), ("All Files", "*.*")])
-    try:
-        conversion_utils.convert_files(pac_filename, "")
-    except Exception as e:
-        logger.critical(f"There was an issue converting {pac_filename}")
-        logger.critical(e)
+    if pac_filename != "":
+        try:
+            conversion_utils.convert_files(pac_filename, "")
+        except Exception as e:
+            logger.critical(f"There was an issue converting {pac_filename}")
+            logger.critical(e)
 
 
 def select_mpc():
     tk.Tk().withdraw()
     mpc_filename = tk.filedialog.askopenfilename(title="Select a .mpc file",
                                                  filetypes=[("Mpc files", "*.mpc"), ("All Files", "*.*")])
-    try:
-        conversion_utils.convert_files("", mpc_filename)
-    except Exception as e:
-        logger.critical(f"There was an issue converting {mpc_filename}")
-        logger.critical(e)
+    if mpc_filename != "":
+        try:
+            conversion_utils.convert_files("", mpc_filename)
+        except Exception as e:
+            logger.critical(f"There was an issue converting {mpc_filename}")
+            logger.critical(e)
 
 def select_folder():
     tk.Tk().withdraw()
     folder_path = tk.filedialog.askdirectory()
-    conversion_utils.convert_folder(folder_path)
-    conversion_utils.display_results()
+    if folder_path != "":
+        conversion_utils.convert_folder(folder_path)
+        conversion_utils.display_results()
 
 def init_interface():
     root = tk.Tk()
