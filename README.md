@@ -25,8 +25,11 @@ pip install -r requirements.txt
 ```bash
 python main.py
 ``` 
-5. **Optional**: Select a character's *.pac file.
-6. **Optional**: Select a character's *.mpc file.
+5. Choose whether you want to convert a single *.pac or *.mpc file or a whole folder.
+![main window's screenshot](/images/main-window.png)
+> Note: Converting a folder is going to recursively look for *.pac and *.mpc files and folders within a selected folder.
+
+6. Select the file/folder to be converted.
 7. Done!  
 
 If everything has run as expected, your selected files will be overwritten and converted to be ready to use on an Xbox 360 or Xenia's version of the game. A backup of the original files will also be created in the same folder under the name of {file_name}.bak.
