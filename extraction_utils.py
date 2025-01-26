@@ -2,6 +2,7 @@ from dds_file import DdsFile
 from hkx_file import HkxFile
 from tex_file import TexFile
 from file import File
+import io
 import zlib
 import logging
 
@@ -20,7 +21,37 @@ def backup_file(input_path: str, output_path: str):
             logger.info(f"    - Copy created at {output_path}.")
 
 def decompress_yzli(data: bytes) -> bytes:
-    return zlib.decompress(data[16:])
+    try:
+        decompressed_data = zlib.decompress(data[16:])
+    except zlib.error as e:
+        decompressed_data = decompress_yzli_corrupted_adler(data[16:])
+
+    return decompressed_data
+
+# Used to decompress a zlib file when its Adler-32 checksum bytes are corrupted
+def decompress_yzli_corrupted_adler(data: bytes) -> bytes:
+    # Find last byte of the file
+    last_byte_index = 0
+    for i in range(len(data) - 1, 0, -1):
+        if (data[i] != 0):
+            last_byte_index = i
+            break
+    '''
+    Decompress the file until (last_byte - 8) in a row and then decompress it byte by byte
+    Ref.: https://github.com/py-pdf/pypdf/issues/422
+    '''
+    decompressor = zlib.decompressobj()
+    file = io.BytesIO(data)
+    decompressed_data = b''
+    buffer = file.read(last_byte_index - 8)
+    try:
+        while buffer:
+            decompressed_data += decompressor.decompress(buffer)
+            buffer = file.read(1)
+    except zlib.error:
+        pass
+    return decompressed_data
+
 
 def extract_pac_path(input_path: str, extension: str) -> list[File]:
     logger.info(f"Attempting to extract .{extension} files from {input_path} ...")
