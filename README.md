@@ -2,8 +2,8 @@
 This is a simple tool that can be used to convert UFC Undisputed 3 character models from PS3 to Xbox 360 or RPCS3 to Xenia.
 
 ## Requirements
-- **Python** >= 3.12.8
-- **ImageMagick** >= 7.1.1
+- [**Python**](https://www.python.org/downloads/) >= 3.12.8
+- [**ImageMagick**](https://imagemagick.org/script/download.php) >= 7.1.1
 
 ## Dependencies
 - **Wand** == 0.6.13 (used for resizing *.dds textures)
@@ -15,7 +15,7 @@ This is a simple tool that can be used to convert UFC Undisputed 3 character mod
     ```bash
     git clone https://github.com/Natan822/ufc-u3-model-converter.git
     ``` 
-   - Or download the latest release's source-code under the [Releases page](https://github.com/Natan822/ufc-u3-model-converter/releases).
+   - Or download and extract the latest release's source-code under the [Releases page](https://github.com/Natan822/ufc-u3-model-converter/releases).
 2. Navigate to the project's directory where 'main.py' is located.
 3. Install dependencies:
 ```bash
@@ -40,4 +40,5 @@ This project would not be possible without:
 - UUC's model ports of UDF's RPCS3 models which were used for reverse engineering.
 
 ## Known issues
-- Converting certain models may not work due to problems decompressing their all.tex file.
+- Fixed. ~~Converting certain models may not work due to problems decompressing their all.tex file.~~
+- Conversion of Pride fighters is not yet supported.
