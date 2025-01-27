@@ -33,7 +33,11 @@ def select_folder():
     tk.Tk().withdraw()
     folder_path = tk.filedialog.askdirectory()
     if folder_path != "":
-        conversion_utils.convert_folder(folder_path)
+        try:
+            conversion_utils.convert_folder(folder_path)
+        except Exception as e:
+            logger.warning(f"Exception caught: {e}")
+            pass
         conversion_utils.display_results()
 
 def init_interface():

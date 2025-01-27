@@ -30,7 +30,7 @@ def convert_folder(folder_path: str):
                     convert_files("", full_path)
                     converted_files.append(full_path)
 
-            except zlib.error as e:
+            except zlib.error or Exception as e:
                 failed_files.append(full_path)
                 logger.critical(f"Error: {e}\n.")
                 logger.warning(f"Failed to convert {full_path}.")
