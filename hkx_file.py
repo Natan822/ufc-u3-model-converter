@@ -16,7 +16,9 @@ class HkxFile(File):
             self.decompress()
 
         data_array = bytearray(self.data)
-        data_array[0x12] = 0
+        if len(data_array) >= 0x12:
+            data_array[0x12] = 0
+
         self.data = bytes(data_array)
 
         logger.info(f"{self.get_name_with_extension()} patched!")
