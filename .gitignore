@@ -188,3 +188,5 @@ fabric.properties
 input-files
 output-files
 out
+
+*.txt
