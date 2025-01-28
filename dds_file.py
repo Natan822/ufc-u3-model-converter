@@ -1,7 +1,11 @@
 from file import File
-from wand.image import Image as WandImage
-import logging
+try:
+    from wand.image import Image as WandImage
+except ImportError:
+    import gui_error
+    gui_error.imagemagick_not_installed()
 
+import logging
 
 logger = logging.getLogger(__name__)
 
