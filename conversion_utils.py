@@ -96,4 +96,5 @@ def display_results():
     for file in failed_files:
         print(f" - {file}")
 
-    converted_files = failed_files = []
+    converted_files = []
+    failed_files = []
