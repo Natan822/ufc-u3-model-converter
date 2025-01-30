@@ -53,35 +53,12 @@ class File:
         logger.info(f"Writing {self.get_name_with_extension()} into {pac_path} ...")
 
         with open(pac_path, "r+b") as file:
-            files_count = int.from_bytes(file.read(4), byteorder="big")
-            file.read(0xC) # Skip rest of the header
-            for i in range(files_count):
-                _name = file.read(0x10).decode("utf-8").replace("\x00", "")
-                _extension = file.read(4).decode("utf-8").replace("\x00", "")
-                size_position = file.tell()
-                file.read(4) # Skip size for now
-                _offset = int.from_bytes(file.read(4), byteorder="big")
-                file.read(4) # Skip zeroes
-
-                if _name == self.name and _extension == self.extension:
-                    file.seek(_offset)
-                    header = file.read(4)
-                    if header.decode() == "YZLI" and not self.isCompressed:
-                        self.compress()
-
-                    file.seek(_offset)
-
-                    file.write(self.data[:8])
-                    file.read(8)  # Skip filename writing
-                    file.write(self.data[16:])
-
-                    # Update data size
-                    file.seek(size_position)
-                    file.write(self.size.to_bytes(4, byteorder="big"))
-
-                    logger.info(f"    - {self.get_name_with_extension()} successfully written into .pac.")
-                    return
-            logger.warning(f"Failed to write {self.get_name_with_extension()} into {pac_path}: File not found within {pac_path}.")
+            new_pac = File("temp", 0, b"", False, "pac")
+            new_pac.data = file.read()
+            self.write_pac_buffer(new_pac)
+            with open(pac_path, "wb") as f:
+                f.write(new_pac.data)
+            return
 
     def write_pac_buffer(self, pac_file: "File"):
         logger.info(f"Writing {self.get_name_with_extension()} into .pac file ...")
@@ -89,37 +66,67 @@ class File:
         file = io.BytesIO(pac_file.data)
         files_count = int.from_bytes(file.read(4), byteorder="big")
         file.read(0xC)  # Skip rest of the header
+        files = []
         for i in range(files_count):
             _name = file.read(0x10).decode("utf-8").replace("\x00", "")
             _extension = file.read(4).decode("utf-8").replace("\x00", "")
             size_position = file.tell()
-            file.read(4)  # Skip size for now
+            _size = int.from_bytes(file.read(4), byteorder="big")
             _offset = int.from_bytes(file.read(4), byteorder="big")
             file.read(4)  # Skip zeroes
+            files.append({"name": _name, "extension": _extension, "size": _size, "size_position" : size_position, "offset": _offset})
 
-            if _name == self.name and _extension == self.extension:
-                file.seek(_offset)
+        has_overflow = False
+        files_data = []
+        target_index = -1
+        overflow = 0
+        for index, f in enumerate(files):
+            if has_overflow:
+                file.seek(f["offset"])
+                _data = file.read(f["size"])
+                files_data.append(_data)
+
+            elif f["name"] == self.name and f["extension"] == self.extension:
+                target_index = index
+                file.seek(f["offset"])
                 header = file.read(4)
                 if header.decode(errors="ignore") == "YZLI" and not self.isCompressed:
                     self.compress()
+                # Not the last file
+                if index != files_count - 1:
+                    max_size = files[index + 1]["offset"] - f["offset"]
+                    if max_size >= 0 and self.size > max_size:
+                        overflow = self.size - max_size
+                        has_overflow = True
 
-                file.seek(_offset)
+        if has_overflow:
+            for index, f in enumerate(files[target_index + 1:]):
+                file.seek(f["size_position"])
+                file.read(4) # Skip size
+                new_offset = f["offset"] + overflow
+                file.write(new_offset.to_bytes(length=4, byteorder="big"))
+                file.seek(new_offset)
+                file.write(files_data.pop(0))
 
-                file.write(self.data[:8])
-                file.read(8) # Skip filename writing
-                file.write(self.data[16:])
+        if target_index == -1:
+            logger.warning(f"Failed to write {self.get_name_with_extension()} into .pac file: File not found within .pac file.")
+            return
 
-                # Update data size
-                file.seek(size_position)
-                file.write(self.size.to_bytes(4, byteorder="big"))
+        new_file = files[target_index]
+        # Update size info
+        file.seek(new_file["size_position"])
+        file.write(self.size.to_bytes(length=4, byteorder="big"))
+        file.seek(new_file["offset"])
+        # Header writing
+        file.write(self.data[:8])
+        file.read(8)  # Skip filename writing
+        # Data writing
+        file.write(self.data[16:])
 
-                file.seek(0)
-                pac_file.data = file.read()
-                pac_file.size = len(pac_file.data)
-                logger.info(f"    - {self.get_name_with_extension()} successfully written into .pac.")
-                return
-        logger.warning(
-            f"Failed to write {self.get_name_with_extension()} into .pac file: File not found within .pac file.")
+        file.seek(0)
+        pac_file.data = file.read()
+        pac_file.size = len(pac_file.data)
+        logger.info(f"    - {self.get_name_with_extension()} successfully written into .pac.")
 
     def write_mpc(self, mpc_path: str):
         logger.info(f"Writing {self.get_name_with_extension()} into {mpc_path} ...")
