@@ -73,15 +73,6 @@ def extract_pac_buffer(buffer: bytes, extension: str) -> list[File]:
             file_name = buffer[row_index - 16: row_index].decode("utf-8", errors="ignore").replace("\x00", "")
             file_offset = int.from_bytes(buffer[row_index + 8: row_index + 12], byteorder="big")
             file_size = int.from_bytes(buffer[row_index + 4: row_index + 8], byteorder="big")
-            # Size is calculated this way: (next_file.offset - current_file.offset)
-            # However, if this is the last file, then: (pac_file.size - current_file.offset)
-            # file_size = 0
-            # if i == (files_count * 2): # Last file
-            #     file_size = len(buffer) - file_offset
-            # else:
-            #     next_file_offset = int.from_bytes(buffer[row_index + 0x20 +  8: row_index + 0x20 + 12], byteorder="big")
-            #     file_size = next_file_offset - file_offset
-
             data = buffer[file_offset: file_offset + file_size]
 
             if extension == "hkx":
