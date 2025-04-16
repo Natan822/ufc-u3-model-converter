@@ -25,6 +25,8 @@ class DdsFile(File):
         elif name_without_id == "_trunks_c" or name_without_id == "_trunks_c2":
             width = 512
             height = 256
+        elif name_without_id == "_eye":
+            width = height = 64
         else:
             logger.info(f"{self.get_name_with_extension()} is not a patchable file.")
             return
